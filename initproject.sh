@@ -23,6 +23,14 @@ cat >> pyproject.toml <<'EOF'
 [build-system]
 requires = ["uv_build>=0.9,<0.10"]
 build-backend = "uv_build"
+
+[tool.uv.sources]
+torch = {index="pytorch-cu132", marker="sys_platform=='win32'"}
+
+[[tool.uv.index]]
+name = "pytorch-cu132"
+url = "https://download.pytorch.org/whl/cu132"
+explicit = true
 EOF
 
 # Setup the dir structure
