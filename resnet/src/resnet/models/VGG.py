@@ -35,7 +35,8 @@ def VGG19(Cin):
                lin_layers=[4096,4096,1000])
 
 if __name__=='__main__':
+    print(f"Running on {device}")
     B,H,W,C = 1,224,224,3
-    im = torch.tensor(np.ones((B,C,H,W)),dtype=torch.float32)
-    model = VGG19(C)
+    im = torch.tensor(np.ones((B,C,H,W)),dtype=torch.float32).to(device)
+    model = VGG19(C).to(device)
     print(f"{im.shape}->{model(im).shape}")
