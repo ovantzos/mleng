@@ -2,15 +2,35 @@
 
 set -euo pipefail
 
-# Setup the project
+# Parse the args
 
 PROJECT_NAME="$1"
 shift
 
+PACKAGES=()
+MODULES=()
+
+for arg in "$@"; do
+    case "$arg" in
+        --packages=*)
+            IFS=',' read -ra PACKAGES <<< "${arg#*=}"
+            ;;
+        --modules=*)
+            IFS=',' read -ra MODULES <<< "${arg#*=}"
+            ;;
+        *)
+            echo "Unknown argument: $arg"
+            exit 1
+            ;;
+    esac
+done
+
 if [ -z "$PROJECT_NAME" ]; then
-    echo "Usage: $0 <project-name>"
+    echo "Usage: $0 <project-name> [--packages=p1,p2,...] [--modules=m1,m2,...]"
     exit 1
 fi
+
+# Setup the project
 
 uv init "$PROJECT_NAME" --python 3.12
 
@@ -35,16 +55,20 @@ EOF
 
 # Setup the dir structure
 
-mkdir -p ./{configs,data,papers,notebooks,src/"$PROJECT_NAME",tests}
+mkdir -p ./{configs,data,papers,notebooks,tests,src/"$PROJECT_NAME"}
 
-touch src/"$PROJECT_NAME"/__init__.py
+touch "src/$PROJECT_NAME/__init__.py"
+for module in "${MODULES[@]}"; do
+    mkdir -p "src/$PROJECT_NAME/$module"
+    touch "src/$PROJECT_NAME/$module/__init__.py"
+done
 
 # Add packages
 
 uv add --dev ipykernel
 
-if [ "$#" -gt 0 ]; then
-    uv add "$@"
+if [ "${#PACKAGES[@]}" -gt 0 ]; then
+    uv add "${PACKAGES[@]}"
 fi
 
 uv sync
