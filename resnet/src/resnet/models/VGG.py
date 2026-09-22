@@ -28,7 +28,9 @@ def VGG(c_in, conv_layers, lin_layers, ksize=3):
     return nn.Sequential(*L)
 
 def VGG19(Cin):
-    return VGG(Cin, [(64,2),(128,2),(256,4),(512,4),(512,4)], [4096,4096,1000])
+    return VGG(Cin, 
+               conv_layers=[(64,2),(128,2),(256,4),(512,4),(512,4)], 
+               lin_layers=[4096,4096,1000])
 
 if __name__=='__main__':
     B,H,W,C = 1,224,224,3
