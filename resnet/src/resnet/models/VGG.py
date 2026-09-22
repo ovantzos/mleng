@@ -3,6 +3,8 @@ import torch.nn as nn
 import torch.nn.functional as fnn
 import numpy as np
 
+device = 'cuda' if torch.cuda.is_available() else 'mps' if torch.mps.is_available() else 'cpu'
+
 def ConvBlock(c_in, c_out, k_size, no_layers):
     return nn.Sequential(
         nn.Conv2d(c_in,c_out, k_size, padding='same'),
